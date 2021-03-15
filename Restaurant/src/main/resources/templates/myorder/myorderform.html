@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>ADP Restaurant - My Order</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<link
+	href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.5/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet"
+	media="screen" />
+
+<script src="http://cdn.jsdelivr.net/webjars/jquery/3.3.1/jquery.min.js"
+	th:src="@{/webjars/jquery/jquery.min.js}"></script>
+
+<link href="../../static/css/spring-core.css"
+	th:href="@{/css/spring-core.css}" rel="stylesheet" type="text/css"
+	media="screen" />
+</head>
+<script type="text/javascript" th:inline="javascript">
+<!--
+function handleData()
+{	
+	var success = false;
+	var app = document.myOrderForm.appId;
+	for (i = 0; i < app.length; i += 1) {
+		if(app[i].checked == true){
+			success = true;
+		}
+	}
+	
+	var entr = document.myOrderForm.entrId;
+	for (i = 0; i < entr.length; i += 1) {
+		if(entr[i].checked == true){
+			success = true;
+		}
+	}
+	
+	var bev = document.myOrderForm.bevId;
+	for (i = 0; i < bev.length; i += 1) {
+		if(bev[i].checked == true){
+			success = true;
+	}
+	
+	if(!success){
+	    document.getElementById('chkbox_error').style.visibility='visible';
+	    return false;
+	}else{
+		document.getElementById('chkbox_error').style.visibility='hidden';
+	}
+		
+	if(document.myOrderForm.customerName.value.length==0){
+		document.getElementById('name_error').style.visibility='visible';
+	    return false;
+	}else{
+		document.getElementById('name_error').style.visibility='hidden';
+	}
+	
+	if(document.myOrderForm.customerPhone.value.length==0){
+		document.getElementById('phone_error').style.visibility='visible';
+	    return false;
+	}else{
+		document.getElementById('phone_error').style.visibility='hidden';
+	}
+	
+	
+	return true;
+}
+//-->
+</script> 
+<body>
+	<div class="container">
+		<h1>ADP Restaurant</h1>
+
+		<div class="row">
+			<table class="table table-striped">
+				<tr>
+					<td><a href="/myorder/list">My Orders</a></td>
+				</tr>
+			</table>
+		</div>
+		 <div class="row">
+        <div class="col-sm-6">
+            <h3>Create Order:</h3>
+        </div>
+        
+  <div style="visibility:hidden; color:red" id="chkbox_error">Please select at least one food item.</div>
+  <div style="visibility:hidden; color:red" id="name_error">Please enter Customer Name.</div>
+  <div style="visibility:hidden; color:red" id="phone_error">Please enter Customer Phone.</div>
+  
+    </div>
+		<form name="myOrderForm" class="form-horizontal" th:object="${myOrderForm}"
+			th:action="@{/myorder}"  method="post">
+
+			<div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+				<p th:text="#{form.hasErrors}">Error Message</p>
+			</div>
+
+			<input type="hidden" th:field="*{id}" />
+			
+			<div th:if="${not #lists.isEmpty(appetizers)}">
+				<div>
+					<p>
+						<b> Appetizers </b>
+					</p>
+				</div>
+				<table width="60%" class="table">
+					<tr>
+						<td width="5%" >Select</td>
+						<td>Id</td>
+						<td>Name</td>
+						<td>Description</td>
+						<td width="5%">Price</td>
+					</tr>
+					<tr th:each="itm, iter : ${appetizers}">
+						<td width="5%" ><input type="checkbox" 
+							th:value="${itm.appId}" th:field="*{appId}" /></td>
+						<td th:text="${itm.appId}"></td>
+						<td th:text="${itm.name}"></td>
+						<td th:text="${itm.description}"></td>
+						<td width="5%" th:text="${'$'+itm.price}"></td>
+											
+					</tr>
+				</table>
+			</div>
+
+			<div th:if="${not #lists.isEmpty(entrees)}">
+				<div>
+					<p>
+						<b>Main Entrees </b>
+					</p>
+				</div>
+				<table width="60%" class="table">
+					
+					<tr th:each="en, iter : ${entrees}">
+						<td width="5%"><input type="checkbox" 
+							th:value="${en.entrId}" th:field="*{entrId}" /></td>
+						<td th:text="${en.entrId}"></td>
+						<td th:text="${en.name}"></td>
+						<td th:text="${en.description}"></td>
+						<td width="5%" th:text="${'$'+en.price}"></td>			
+									
+					</tr>
+				</table>
+			</div>
+
+			<div th:if="${not #lists.isEmpty(beverages)}">
+				<div>
+					<p>
+						<b>Beverages </b>
+					</p>
+				</div>
+				<table width="60%" class="table">
+					
+					<tr th:each="bv, iter : ${beverages}">
+						<td width="5%"><input type="checkbox" 
+							th:value="${bv.bevId}" th:field="*{bevId}" /></td>
+						<td th:text="${bv.bevId}"></td>
+						<td th:text="${bv.name}"></td>
+						<td th:text="${bv.description}"></td>
+						<td width="5%" th:text="${'$'+bv.price}"></td>
+																
+					</tr>
+				</table>
+			</div>
+			<div class="row">
+				<div class="form-group"
+					th:class="${#fields.hasErrors('customerName')} ? 'form-group has-error' : 'form-group'">
+					<label class="col-sm-2 control-label">Customer Name:</label>
+					<div class="col-sm-10">
+						<input type="text" maxlength="50" class="form-control" th:field="*{customerName}"
+							th:errorclass="has-error" /> <span class="help-block">
+							<ul>
+								<li th:each="err : ${#fields.errors('customerName')}"
+									th:text="${err}" />
+							</ul>
+						</span>
+					</div>
+				</div>
+
+				<div class="form-group"
+					th:class="${#fields.hasErrors('customerPhone')} ? 'form-group has-error' : 'form-group'">
+					<label class="col-sm-2 control-label">Customer Phone:</label>
+					<div class="col-sm-10">
+						<input type="text" maxlength="10" class="form-control"
+							th:field="*{customerPhone}" th:errorclass="has-error" /> <span
+							class="help-block">
+							<ul>
+								<li th:each="err : ${#fields.errors('customerPhone')}"
+									th:text="${err}" />
+							</ul>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<button type="submit" th:onClick="|return handleData();|" class="btn btn-default">Submit Order</button>
+			</div>
+
+		</form>
+	</div>
+
+</body>
+</html>

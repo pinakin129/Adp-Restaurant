@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>ADP Restaurant - My Orders List</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<link
+	href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.5/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet"
+	media="screen" />
+
+<script src="http://cdn.jsdelivr.net/webjars/jquery/3.3.1/jquery.min.js"
+	th:src="@{/webjars/jquery/jquery.min.js}"></script>
+
+<link href="../../static/css/spring-core.css"
+	th:href="@{/css/spring-core.css}" rel="stylesheet" media="screen" />
+</head>
+<body>
+	<div class="container">
+		<h1>ADP Restaurant</h1>
+		<div class="row">
+			<div class="col-sm-3">
+				<table class="table table-striped">
+					<tr>
+						<td><a href="/myorder/new">New Order</a></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div th:if="${not #lists.isEmpty(myorders)}">
+			 <div class="row">
+        <div class="col-sm-6">
+            <h3>My Order:</h3>
+        </div>
+    </div>
+			<table class="table table-striped">
+				<tr>
+					<th>Order Id</th>
+					<th>Customer Name</th>
+					<th>Customer Phone</th>
+					<th>View</th>
+					<th>Delete</th>
+				</tr>
+				<tr th:each="ordr : ${myorders}">
+					<td th:text="${ordr.id}"></td>
+					<td th:text="${ordr.customerName}"></td>
+					<td th:text="${ordr.customerPhone}"></td>
+					<td><a th:href="${'/myorder/show/' + ordr.id}">View</a></td>
+					<td><a th:href="${'/myorder/delete/' + ordr.id}">Delete</a></td>
+				</tr>
+			</table>
+		</div>
+
+	</div>
+
+</body>
+</html>
